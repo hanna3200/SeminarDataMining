@@ -36,3 +36,8 @@ plt.pie(sizes, labels=labels, colors=colors, explode=explode, autopct='%.2f%%', 
 plt.title('Fehlerquote Prüfresultat Tag 1')
 plt.axis('equal')  # Sicherstellen, dass der Kreis rund ist
 plt.show()
+
+
+
+
+# Block 7: Arbeitspaket 1.2 – Prüfstandstatistik
