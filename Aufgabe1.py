@@ -2,21 +2,22 @@
 
 # Teil 1: Kombination der beiden Datensätze (Insgesamt 100 Datenreihen in 5 Spalten)
 
-# Teil 1.1: Daten einlesen mit pandas
+# Teil 1.1: Daten importieren aus File "datenimport"
+import datenimport
 import pandas as pd
 
-# Excel-Datei einlesen (am besten Dateien dort ablegen, wo Python-Arbeitsdatei abliegt)
-# Tabelle1 = pd.read_excel("Dateipfad")
-Tabelle1 = pd.read_excel("/Users/hannaweinmann/PycharmProjects/SeminarDataMining/Produktionsdaten/DatenTag1/00_Block4_Iris Flower DataSet/Iris_01.xlsx")
+# Excel-Datei importieren
+dateipfad_excel = "/Users/hannaweinmann/PycharmProjects/SeminarDataMining/Produktionsdaten/DatenTag1/00_Block4_Iris Flower DataSet/Iris_01.xlsx"
+Tabelle1 = datenimport.importiere_excel_datei(dateipfad_excel)
 
 # Eingelesene Daten anzeigen lassen
 print("Teil 1.1 Tabelle 1")
 print (Tabelle1)
 
 
-# csv-Datei einlesen (am besten Dateien dort ablegen, wo Python-Arbeitsdatei abliegt)
-# Tabelle2 = pd.read_csv("Dateipfad")
-Tabelle2 = pd.read_csv("/Users/hannaweinmann/PycharmProjects/SeminarDataMining/Produktionsdaten/DatenTag1/00_Block4_Iris Flower DataSet/Iris_02.csv")
+# csv-Datei importieren
+dateipfad_csv = "/Users/hannaweinmann/PycharmProjects/SeminarDataMining/Produktionsdaten/DatenTag1/00_Block4_Iris Flower DataSet/Iris_02.csv"
+Tabelle2 = datenimport.importiere_csv_datei(dateipfad_csv)
 
 # Eingelesene Daten anzeigen lassen
 print("Teil 1.1 Tabelle 2")
@@ -58,7 +59,7 @@ else:
 
 # Teil 2: Visualisierung der Klassifikation (3 verschiedene Spezies/Arten der Schwertlilien)
 
-# Scatterplot erstellen mit matplotlib
+# Teil 2.1 Scatterplot erstellen mit matplotlib
 import matplotlib.pyplot as plt
 
 # Farbliche Unterscheidung der "Art" mit seaborn
@@ -72,7 +73,7 @@ x="sepal length",           # X-Achse: Sepal Length
 y="sepal width",            # Y-Achse: Sepal Width
 hue="Art",                  # Farbliche Trennung nach Arten
 style="Art",                # Punktform für jede Art
-palette="Set2"              # Farbpalette
+palette={'setosa': 'red', 'versicolor': 'blue', 'virginica': 'green'},  # Farben für jede Kategorie
 )
 
 # Titel und Achsenbeschriftung hinzufügen
@@ -83,7 +84,8 @@ plt.ylabel("Sepal Width")
 # Plot anzeigen
 plt.show()
 
-# Scatterplot erstellen zu Petal Länge und Weite, Farben nach "Art"
+
+# Teil 2.2 Scatterplot erstellen zu Petal Länge und Weite, Farben nach "Art"
 plt.figure(figsize=(10, 6))     # Legt die Größe des Diagramms fest
 sns.scatterplot(
 data=kombinierte_tabelle,
@@ -91,7 +93,7 @@ x="petal length",           # X-Achse: Sepal Length
 y="petal width",            # Y-Achse: Sepal Width
 hue="Art",                  # Farbliche Trennung nach Arten
 style="Art",                # Punktform für jede Art
-palette="Set2"              # Farbpalette
+palette={'setosa': 'red', 'versicolor': 'blue', 'virginica': 'green'},  # Farben für jede Kategorie
 )
 
 # Titel und Achsenbeschriftung hinzufügen
@@ -103,33 +105,65 @@ plt.ylabel("Petal Width")
 plt.show()
 
 
-# 3D Scatterplot mit Sepal Länge, Sepal Weite und Petal Länge
+
+# Teil 2.3 Scatter Matrix mit allen möglichen Scatter Plots
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Scatter-Matrix mit Scatterplots auf der Diagonale
+scatter_matrix = sns.pairplot(
+    kombinierte_tabelle,        # Die kombinierte Tabelle
+    hue="Art",                  # Farbliche Unterscheidung nach "Art"
+    palette={'setosa': 'red', 'versicolor': 'blue', 'virginica': 'green'},  # Farben für jede Kategorie
+    diag_kind="auto",           # Scatterplots auch auf der Diagonale
+    markers=["o", "s", "D"],    # Punktmarker für jede Kategorie
+    plot_kws={'s': 50}          # Anpassung der Punktgröße im Scatterplot
+)
+
+# Titel hinzufügen
+scatter_matrix.fig.suptitle("Scatter-Matrix: Paarweise Darstellung der Merkmale", y=1.02)
+
+# Größe des Plots anpassen - bei Bedarf
+scatter_matrix.fig.set_size_inches(12, 7)  # Breite und Höhe in Zoll festlegen
+
+# Plot anzeigen
+plt.show()
+
+
+
+# Teil 2.4 3D Scatterplot mit Sepal Länge, Sepal Weite und Petal Länge
+import matplotlib.pyplot as plt
+# Farben für die Kategorien definieren
+farbe_mapping = {'setosa': 'red', 'versicolor': 'blue', 'virginica': 'green'}
+
+# Daten vorbereiten
 x = kombinierte_tabelle["sepal length"]  # x-Achse
 y = kombinierte_tabelle["sepal width"]   # y-Achse
 z = kombinierte_tabelle["petal length"]  # z-Achse
-kategorie = kombinierte_tabelle["Art"]   # 4. Dimension (kategorische Variable)
+kategorie = kombinierte_tabelle["Art"]   # Kategorische Variable
 
-# Umwandlung der kategorialen Daten (Strings) in numerische Werte (Index)
-# keine gute Lösung, da Kategorie dann als Scala!
-kategorie_num = pd.factorize(kategorie)[0]  # Wandelt die Kategorien in Indizes um
+# Farben zuordnen basierend auf der Kategorie
+farben = kategorie.map(farbe_mapping)
 
 # 3D-Plot vorbereiten
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
 
-# 3D-Scatterplot erstellen mit Farbzuweisung basierend auf der Kategorie
-scatter = ax.scatter(x, y, z, c=kategorie_num, cmap='viridis', s=50)  # c=kategorie_num für die Farbkodierung
+# 3D-Scatterplot erstellen
+scatter = ax.scatter(x, y, z, c=farben, s=50)  # 'c=farben' sorgt für Farbcodierung
 
 # Achsenbeschriftung hinzufügen
 ax.set_xlabel('Sepal Length')
 ax.set_ylabel('Sepal Width')
 ax.set_zlabel('Petal Length')
 
-# Farbskala hinzufügen
-fig.colorbar(scatter, label="Species (as Category)")
-
 # Titel hinzufügen
 plt.title('3D Scatterplot mit Kategorien (farblich codiert)')
+
+# Legende hinzufügen
+handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10, label=label)
+           for label, color in farbe_mapping.items()]
+ax.legend(handles=handles, title="Art", loc='upper left')
 
 # Plot anzeigen
 plt.show()
