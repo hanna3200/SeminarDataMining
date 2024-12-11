@@ -1,9 +1,9 @@
 
-# import necessary libraries
+# Import notwendiger Bibliotheken
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# read in Excel-file for production day 1
+# Excel-File für Produktionstag 1 einlesen
 excel_file_Dezember_Produktionstag_1 = r"C:\Users\fabia\OneDrive\Documents\Studium\KIT WING Master\Data Mining in der Produktion\01_Block5_Produktionstag 1\Dezember_Produktionstag1.xlsx"
 df_Produktionstag_1 = pd.read_excel(excel_file_Dezember_Produktionstag_1)
 df_Produktionstag_1.head()
